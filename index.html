@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SIP Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f7f6;--card:#fff;--ink:#12324a;--mut:#5d7384;--line:#dde6e9;--inv:#12324a;--ret:#1f9d78;--acc:#f2a33a;--soft:#e8f4ef;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1b26;--card:#14283a;--ink:#e8f1f5;--mut:#93a8b6;--line:#244157;--inv:#6fa8d6;--ret:#3ccf9f;--soft:#12362f}}
+:root[data-theme="dark"]{--bg:#0d1b26;--card:#14283a;--ink:#e8f1f5;--mut:#93a8b6;--line:#244157;--inv:#6fa8d6;--ret:#3ccf9f;--soft:#12362f}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Sora',system-ui,sans-serif;line-height:1.5}
+.wrap{max-width:1040px;margin:0 auto;padding:0 18px}
+header{display:flex;justify-content:space-between;align-items:center;padding:16px 0}
+.logo{font-weight:700;font-size:18px;display:flex;gap:8px;align-items:center}
+.logo i{width:26px;height:26px;border-radius:8px;background:var(--ret);display:inline-block;position:relative}
+.logo i:after{content:"";position:absolute;left:6px;bottom:6px;width:4px;height:8px;background:#fff;box-shadow:6px -4px 0 #fff,12px -8px 0 #fff;border-radius:1px}
+nav{display:flex;gap:18px;font-size:14px;color:var(--mut)}nav a{color:inherit;text-decoration:none}nav a:hover{color:var(--ink)}
+button{font:inherit;cursor:pointer}
+#theme{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:20px;padding:6px 14px;font-size:13px}
+.hero{padding:26px 0 18px}.hero h1{font-size:clamp(26px,5vw,40px);margin:0 0 8px;line-height:1.15}
+.hero p{margin:0;color:var(--mut);max-width:560px}
+.tabs{display:flex;gap:6px;margin:20px 0 14px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:5px;width:fit-content;max-width:100%;overflow-x:auto}
+.tabs button{border:0;background:none;color:var(--mut);padding:9px 18px;border-radius:8px;font-weight:600;font-size:14px;white-space:nowrap}
+.tabs button.on{background:var(--ink);color:var(--bg)}
+.grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:16px}
+@media(max-width:820px){.grid{grid-template-columns:1fr}nav{display:none}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px}
+.f{margin-bottom:18px}.f .top{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:14px;margin-bottom:8px}
+.f .top label{color:var(--mut)}
+.f input[type=number]{width:118px;text-align:right;border:1px solid var(--line);background:var(--soft);color:var(--ink);border-radius:8px;padding:6px 10px;font:inherit;font-weight:600}
+input[type=range]{width:100%;accent-color:var(--ret)}
+input:focus-visible,button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.hint{font-size:12px;color:var(--mut);margin:0}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+@media(max-width:520px){.stats{grid-template-columns:1fr}}
+.stat{border-radius:10px;padding:12px 14px;background:var(--soft)}
+.stat small{display:block;color:var(--mut);font-size:12px}.stat b{font-size:19px}
+.stat.big{background:var(--ink);color:var(--bg)}.stat.big small{color:inherit;opacity:.75}
+.viz{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.legend{font-size:13px;color:var(--mut)}.legend div{display:flex;align-items:center;gap:8px;margin:4px 0}
+.dot{width:10px;height:10px;border-radius:3px;display:inline-block}
+.real{margin-top:14px;padding:12px 14px;border-left:4px solid var(--acc);background:var(--soft);border-radius:0 10px 10px 0;font-size:14px}
+h2{font-size:17px;margin:0 0 12px}
+.sec{margin-top:16px}
+.tw{max-height:300px;overflow:auto;overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:420px}
+th,td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left}th{position:sticky;top:0;background:var(--card);color:var(--mut);font-weight:600}
+.how{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}@media(max-width:820px){.how{grid-template-columns:1fr}}
+code{background:var(--soft);padding:2px 6px;border-radius:6px;font-size:12px;word-break:break-word}
+footer{color:var(--mut);font-size:12px;text-align:center;padding:26px 0 30px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="logo"><i></i>SIP Calculator</div>
+  <nav><a href="#calc">Calculator</a><a href="#table">Year-wise</a><a href="#how">Formula</a></nav>
+  <button id="theme" type="button">Dark mode</button>
+</header>
+
+<section class="hero">
+  <h1>Apna paisa 10 saal baad kitna banega?</h1>
+  <p>Monthly SIP, Lumpsum ya Goal chuniye. Result turant dikhega, rupaye lakh/crore format mein.</p>
+</section>
+
+<div class="tabs" id="tabs" role="tablist">
+  <button class="on" data-m="sip">SIP</button>
+  <button data-m="lump">Lumpsum</button>
+  <button data-m="goal">Goal Planner</button>
+</div>
+
+<main id="calc" class="grid">
+  <section class="card">
+    <div class="f"><div class="top"><label id="l-amt" for="amt">Monthly investment (₹)</label><input type="number" id="amt" min="0"></div>
+      <input type="range" id="amt-r"></div>
+    <div class="f"><div class="top"><label for="rate">Expected return (% per year)</label><input type="number" id="rate" min="1" max="30" step="0.5"></div>
+      <input type="range" id="rate-r" min="1" max="30" step="0.5"></div>
+    <div class="f"><div class="top"><label for="yrs">Time period (years)</label><input type="number" id="yrs" min="1" max="40"></div>
+      <input type="range" id="yrs-r" min="1" max="40"></div>
+    <div class="f" id="f-step"><div class="top"><label for="step">Step-up every year (%)</label><input type="number" id="step" min="0" max="25"></div>
+      <input type="range" id="step-r" min="0" max="25"></div>
+    <div class="f" style="margin-bottom:0"><div class="top"><label for="inf">Inflation (% per year)</label><input type="number" id="inf" min="0" max="15" step="0.5"></div>
+      <input type="range" id="inf-r" min="0" max="15" step="0.5"></div>
+  </section>
+
+  <section class="card">
+    <div class="stats">
+      <div class="stat"><small id="s1l">Invested amount</small><b id="s1">-</b></div>
+      <div class="stat"><small>Estimated returns</small><b id="s2">-</b></div>
+      <div class="stat big"><small>Total value</small><b id="s3">-</b></div>
+    </div>
+    <div class="viz">
+      <svg id="donut" width="150" height="150" viewBox="0 0 42 42" role="img" aria-label="Invested vs returns">
+        <circle cx="21" cy="21" r="15.9" fill="none" stroke="var(--ret)" stroke-width="6"/>
+        <circle id="arc" cx="21" cy="21" r="15.9" fill="none" stroke="var(--inv)" stroke-width="6" stroke-dasharray="0 100" transform="rotate(-90 21 21)"/>
+        <text id="pct" x="21" y="22.5" text-anchor="middle" font-size="6" font-weight="700" fill="var(--ink)">0%</text>
+      </svg>
+      <div class="legend">
+        <div><span class="dot" style="background:var(--inv)"></span>Invested</div>
+        <div><span class="dot" style="background:var(--ret)"></span>Returns</div>
+        <div id="need" style="color:var(--ink);font-weight:600"></div>
+      </div>
+      <svg id="bars" viewBox="0 0 600 200" style="flex:1;min-width:240px" role="img" aria-label="Year-wise growth"></svg>
+    </div>
+    <div class="real" id="real"></div>
+  </section>
+</main>
+
+<section class="card sec" id="table">
+  <h2>Year-wise growth</h2>
+  <div class="tw"><table><thead><tr><th>Year</th><th>Invested</th><th>Returns</th><th>Value</th></tr></thead><tbody id="tb"></tbody></table></div>
+</section>
+
+<section class="sec how" id="how">
+  <div class="card"><h2>SIP formula</h2><p class="hint"><code>FV = P × [((1+i)^n − 1) / i] × (1+i)</code><br>P = monthly SIP, i = yearly rate ÷ 12 ÷ 100, n = total months.</p></div>
+  <div class="card"><h2>Step-up SIP</h2><p class="hint">Har saal SIP amount aapke chune hue % se badhta hai, jaise salary badhne par SIP badhana.</p></div>
+  <div class="card"><h2>Inflation adjusted</h2><p class="hint"><code>Aaj ki value = FV ÷ (1+inflation)^years</code><br>Yani future ke paise se aaj kya kharid paayenge.</p></div>
+</section>
+<section class="card sec" id="about">
+  <h2>What is SIP? SIP के बारे में</h2>
+  <p style="margin:0 0 10px">SIP (Systematic Investment Plan) म्यूचुअल फंड में निवेश करने का एक आसान तरीका है। इसमें आप हर महीने एक तय रकम, जैसे ₹500 या ₹5,000, अपने चुने हुए फंड में अपने आप निवेश करते हैं। एक साथ बड़ी रकम लगाने की ज़रूरत नहीं होती।</p>
+  <div class="how" style="margin-top:14px">
+    <div class="stat"><b style="font-size:15px">SIP के फायदे</b><small style="margin-top:6px">छोटी रकम से शुरुआत, निवेश की आदत, और बाज़ार के उतार-चढ़ाव में औसत लागत (रुपी कॉस्ट एवरेजिंग)।</small></div>
+    <div class="stat"><b style="font-size:15px">कंपाउंडिंग की ताकत</b><small style="margin-top:6px">आपके रिटर्न पर भी रिटर्न मिलता है, इसलिए जितना लंबा निवेश, उतना बड़ा फायदा।</small></div>
+    <div class="stat"><b style="font-size:15px">ध्यान रखें</b><small style="margin-top:6px">SIP में बाज़ार का जोखिम होता है। रिटर्न की गारंटी नहीं है। निवेश से पहले अपने लक्ष्य और जोखिम क्षमता देखें।</small></div>
+  </div>
+</section>
+<footer>Returns sirf estimate hain, guaranteed nahi. Market risk ke adheen. Yeh financial salah nahi hai.</footer>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const cfg={
+ sip:{lab:'Monthly investment (₹)',amt:[500,100000,500,10000],s1:'Invested amount'},
+ lump:{lab:'Total investment (₹)',amt:[10000,10000000,10000,500000],s1:'Invested amount'},
+ goal:{lab:'Target amount (₹)',amt:[100000,100000000,100000,5000000],s1:'Total invested'}
+};
+let mode='sip';
+const vals={sip:[10000,12,10,10,6],lump:[500000,12,10,0,6],goal:[5000000,12,10,0,6]};
+const ids=['amt','rate','yrs','step','inf'];
+const inr=n=>'₹'+Math.round(n).toLocaleString('en-IN');
+function short(n){n=Math.round(n);if(n>=1e7)return '₹'+(n/1e7).toFixed(2)+' Cr';if(n>=1e5)return '₹'+(n/1e5).toFixed(2)+' L';return inr(n)}
+function setMode(m){
+  mode=m;const c=cfg[m];
+  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));
+  $('l-amt').textContent=c.lab;$('s1l').textContent=c.s1;
+  const r=$('amt-r');r.min=c.amt[0];r.max=c.amt[1];r.step=c.amt[2];
+  $('f-step').style.display=m==='sip'?'':'none';
+  ids.forEach((id,k)=>{$(id).value=vals[m][k];$(id+'-r').value=vals[m][k]});
+  calc();
+}
+function sync(id,v){
+  v=parseFloat(v);if(isNaN(v))return;
+  $(id).value=v;$(id+'-r').value=v;
+  vals[mode][ids.indexOf(id)]=v;calc();
+}
+ids.forEach(id=>{
+  $(id).addEventListener('input',e=>{const v=parseFloat(e.target.value);if(!isNaN(v)){$(id+'-r').value=v;vals[mode][ids.indexOf(id)]=v;calc()}});
+  $(id+'-r').addEventListener('input',e=>sync(id,e.target.value));
+});
+document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>setMode(b.dataset.m));
+
+function simulate(P,r,y,step){
+  const i=r/1200,rows=[];let bal=0,inv=0;
+  for(let m=1;m<=y*12;m++){
+    const sip=P*Math.pow(1+step/100,Math.floor((m-1)/12));
+    bal=(bal+sip)*(1+i);inv+=sip;
+    if(m%12===0)rows.push({y:m/12,inv:inv,val:bal});
+  }
+  return rows;
+}
+function lumpRows(A,r,y){const rows=[];for(let k=1;k<=y;k++)rows.push({y:k,inv:A,val:A*Math.pow(1+r/100,k)});return rows}
+
+function calc(){
+  let [a,r,y,s,inf]=vals[mode];y=Math.max(1,Math.round(y));
+  let rows,need='';
+  if(mode==='sip')rows=simulate(a,r,y,s);
+  else if(mode==='lump')rows=lumpRows(a,r,y);
+  else{
+    const i=r/1200,n=y*12;
+    const P=i===0?a/n:a/(((Math.pow(1+i,n)-1)/i)*(1+i));
+    rows=simulate(P,r,y,0);
+    need='Monthly SIP chahiye: '+inr(P);
+  }
+  const L=rows[rows.length-1],ret=L.val-L.inv;
+  $('s1').textContent=short(L.inv);$('s2').textContent=short(ret);$('s3').textContent=short(L.val);
+  $('need').textContent=need;
+  const p=L.val>0?L.inv/L.val*100:0;
+  $('arc').setAttribute('stroke-dasharray',p.toFixed(1)+' '+(100-p).toFixed(1));
+  $('pct').textContent=Math.round(100-p)+'%';
+  const real=L.val/Math.pow(1+inf/100,y);
+  $('real').innerHTML='Inflation ('+inf+'%) ke baad, '+y+' saal ki '+short(L.val)+' ki value aaj ke hisaab se lagbhag <b>'+short(real)+'</b> hogi.';
+  $('tb').innerHTML=rows.map(o=>'<tr><td>'+o.y+'</td><td>'+inr(o.inv)+'</td><td>'+inr(o.val-o.inv)+'</td><td><b>'+inr(o.val)+'</b></td></tr>').join('');
+  const mx=L.val,w=600/rows.length,bw=Math.max(2,w*0.7);
+  $('bars').innerHTML=rows.map((o,k)=>{
+    const hi=o.inv/mx*180,hr=(o.val-o.inv)/mx*180,x=k*w+(w-bw)/2;
+    return '<rect x="'+x.toFixed(1)+'" y="'+(190-hi).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+hi.toFixed(1)+'" fill="var(--inv)"/><rect x="'+x.toFixed(1)+'" y="'+(190-hi-hr).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+hr.toFixed(1)+'" fill="var(--ret)"/>';
+  }).join('')+'<line x1="0" y1="190" x2="600" y2="190" stroke="var(--line)"/><text x="0" y="mm" font-size="0"></text>';
+}
+
+const root=document.documentElement;
+function themeLabel(){const d=root.dataset.theme==='dark'||(!root.dataset.theme&&matchMedia('(prefers-color-scheme:dark)').matches);$('theme').textContent=d?'Light mode':'Dark mode';return d}
+$('theme').onclick=()=>{root.dataset.theme=themeLabel()?'light':'dark';themeLabel()};
+themeLabel();setMode('sip');
+</script>
+</body>
+</html>
